@@ -1,0 +1,6 @@
+double_curve.png 21
+children_crossing.jpg 28 
+50-Km-limit.jpg 2
+stop.jpeg 14
+go_straigth_or_left.jpg 37
+80-Km-limit.jpg 5
