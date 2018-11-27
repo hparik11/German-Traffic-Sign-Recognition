@@ -1,0 +1,10 @@
+001.jpg 13
+002.jpg 3
+003.jpg 14
+004.jpg 27
+005.jpg 17
+sign4.png 35
+sign7.png 34
+sign8.png 40
+sign9.png 7
+sign10.png 5

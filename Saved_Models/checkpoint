@@ -1,0 +1,2 @@
+model_checkpoint_path: "LeNet_normalized"
+all_model_checkpoint_paths: "LeNet_normalized"
