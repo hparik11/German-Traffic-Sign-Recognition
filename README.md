@@ -1,58 +1,134 @@
-## Project: Build a Traffic Sign Recognition Program
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+# Traffic Sign Classification
 
-Overview
----
-In this project, you will use what you've learned about deep neural networks and convolutional neural networks to classify traffic signs. You will train and validate a model so it can classify traffic sign images using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset). After the model is trained, you will then try out your model on images of German traffic signs that you find on the web.
+In this project, I've built and trained a deep neural network to classify German traffic signs using Tensorflow and Scikit-Learn's Pipeline framework.
 
-We have included an Ipython notebook that contains further instructions 
-and starter code. Be sure to download the [Ipython notebook](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb). 
+![sample_images](images/sample_data.png)
 
-We also want you to create a detailed writeup of the project. Check out the [writeup template](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup. The writeup can be either a markdown file or a pdf document.
+# Getting Started
 
-To meet specifications, the project will require submitting three files: 
-* the Ipython notebook with the code
-* the code exported as an html file
-* a writeup report either as a markdown or pdf file 
+You can set up the required python library as follows:
 
-Creating a Great Writeup
----
-A great writeup should include the [rubric points](https://review.udacity.com/#!/rubrics/481/view) as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
-
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
-
-The Project
----
-The goals / steps of this project are the following:
-* Load the data set
-* Explore, summarize and visualize the data set
-* Design, train and test a model architecture
-* Use the model to make predictions on new images
-* Analyze the softmax probabilities of the new images
-* Summarize the results with a written report
-
-### Dependencies
-This lab requires:
-
-* [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
-
-The lab environment can be created with CarND Term1 Starter Kit. Click [here](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) for the details.
-
-### Dataset and Repository
-
-1. Download the data set. The classroom has a link to the data set in the "Project Instructions" content. This is a pickled dataset in which we've already resized the images to 32x32. It contains a training, validation and test set.
-2. Clone the project, which contains the Ipython notebook and the writeup template.
-```sh
-git clone https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project
-cd CarND-Traffic-Sign-Classifier-Project
-jupyter notebook Traffic_Sign_Classifier.ipynb
+```
+conda env create -f environments-gpu.yml  # with GPU
 ```
 
-### Requirements for Submission
-Follow the instructions in the `Traffic_Sign_Classifier.ipynb` notebook and write the project report using the writeup template as a guide, `writeup_template.md`. Submit the project code and writeup document.
+If you have no CUDA-enabled GPU, you can use the following:
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+```
+conda env create -f environments.yml  # with CPU
+```
+
+You can start the notebook as follows:
+
+```
+jupyter notebook German_Traffic_Sign_Classifier.ipynb
+```
+
+# Train and Test Data
+
+> I have used [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset) where the bounding box locations and labels for  traffic signs are provided. Here is a random sample of images: 
+
+<img src="images/sample_images.png" width="750"/>
+
+> [Download the dataset](https://d17h27t6h515a5.cloudfront.net/topher/2016/November/581faac4_traffic-signs-data/traffic-signs-data.zip). This is a pickled dataset in which we've already resized the images to 32x32.
+
+  * It contains three pickle (.p) files: 
+
+    - train.p: The training set.
+    - test.p: The testing set.
+    - valid.p: The validation set.
+
+We will use Python pickle to load the data.
+
+## Data Set Summary & Exploration
+
+I used the pandas library to calculate summary statistics of the traffic
+signs data set:
+
+* The size of training set is 35209
+* The size of the validation set is 4000
+* The size of test set is 12630
+* The shape of a traffic sign image is (32, 32, 3)
+* The number of unique classes/labels in the data set is 43
+
+Here is an exploratory visualization of the data set. It is a bar chart showing how the data is 
+ditributed across the different labels.
+
+<img src="images/class_distribution.png" width="750"/>
+
+# Data Preprocessing
+
+In this step, we will apply several preprocessing steps to the input images to achieve the best possible results.
+
+We will use the following preprocessing techniques:
+
+1. **Shuffling**: In general, we shuffle the training data to increase randomness and variety in training dataset, in order for the model to be more stable. We will use `sklearn` to shuffle our data.
+
+2. **Grayscaling**: In their paper ["Traffic Sign Recognition with Multi-Scale Convolutional Networks"](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf) published in 2011, P. Sermanet and Y. LeCun stated that using grayscale images instead of color improves the ConvNet's accuracy. We will use `OpenCV` to convert the training images into grey scale.
+
+3. **Normalization**: Normalization is a process that changes the range of pixel intensity values. Usually the image data should be normalized so that the data has mean zero and equal variance.
+
+4. **Local Histogram Equalization**: This technique simply spreads out the most frequent intensity values in an image, resulting in enhancing images with low contrast. Applying this technique will be very helpfull in our case since the dataset in hand has real world images, and many of them has low contrast. We will use `skimage` to apply local histogram equalization to the training images.
+ 
+## Original Images
+<img src="images/original_data.png" width="750"/>
+
+## Preprocessed/Transformed Images
+<img src="images/preprocessed_images.png" width="750"/>
+
+# Model Architecture and Results
+
+## LeNet
+
+The model is based on [LeNet](http://yann.lecun.com/exdb/lenet/) by Yann LeCun.  It is a convolutional neural network designed to recognize visual patterns directly from pixel images with minimal preprocessing.  It can handle hand-written characters very well. 
+
+<img src="images/lenet.png" width="750"/>
+
+Source: http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf
+
+Our model is adapted from the LeNet as follows.  
+
+- The inputs are 32x32 (RGB - 3 channels) images
+- The activation function is ReLU except for the output layer which uses Softmax
+- The output has 43 classes
+
+|Layer                       | Shape    |
+|----------------------------|:--------:|
+|Input                       | 32x32x3  |
+|Convolution (valid, 5x5x6)  | 28x28x6  |
+|Max Pooling (valid, 2x2)    | 14x14x6  |
+|Activation  (ReLU)          | 14x14x6  |
+|Convolution (valid, 5x5x16) | 10x10x16 |
+|Max Pooling (valid, 2x2)    | 5x5x16   |
+|Activation  (ReLU)          | 5x5x16   |
+|Flatten                     | 400      |
+|Dense                       | 120      |
+|Activation  (ReLU)          | 120      |
+|Dense                       | 84      |
+|Activation  (ReLU)          | 84      |
+|Dense                       | 43       |
+|Activation  (Softmax)       | 43       |
+
+## Results
+
+### Learning curve
+
+<img src="images/learning_curve.png" width="450"/>
+
+### Confusion Matrix
+
+<img src="images/confusion_matrix2.png" width="500"/>
+
+
+# Test a Model on New Images
+
+Here are ten German traffic signs that I found on the web:
+
+<img src="images/new_images.png" width="750"/>
+
+Since these images are not in the right shape accepted by the classifier they were downsampled and smoothed before applying the `preprocess_dataset` function.
+
+Below I visualize the softmax probablities for each test image : 
+
+<img src="images/new_image_top5.png" width="750"/>
 
