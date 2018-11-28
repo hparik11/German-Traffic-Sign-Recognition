@@ -1,4 +1,4 @@
-name: car-traffic-sign-classification
+name: traffic-sign-classification
 channels:
     - https://conda.anaconda.org/menpo
 dependencies:

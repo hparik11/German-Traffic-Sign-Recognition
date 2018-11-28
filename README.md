@@ -1,6 +1,6 @@
-# Traffic Sign Classification
+# German Traffic Sign Recognition
 
-In this project, I've built and trained a deep neural network to classify German traffic signs using Tensorflow and Scikit-Learn's Pipeline framework.
+In this project, I've built and trained a deep neural network to classify German traffic signs using Tensorflow.
 
 ![sample_images](images/sample_data.png)
 
@@ -54,7 +54,7 @@ signs data set:
 Here is an exploratory visualization of the data set. It is a bar chart showing how the data is 
 ditributed across the different labels.
 
-<img src="images/class_distribution.png" width="750"/>
+<img src="images/class_distribution.png" width="1000" height="250"/>
 
 # Data Preprocessing
 
@@ -82,7 +82,7 @@ We will use the following preprocessing techniques:
 
 The model is based on [LeNet](http://yann.lecun.com/exdb/lenet/) by Yann LeCun.  It is a convolutional neural network designed to recognize visual patterns directly from pixel images with minimal preprocessing.  It can handle hand-written characters very well. 
 
-<img src="images/lenet.png" width="750"/>
+<img src="images/lenet.png" width="1000"/>
 
 Source: http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf
 
@@ -113,18 +113,18 @@ Our model is adapted from the LeNet as follows.
 
 ### Learning curve
 
-<img src="images/learning_curve.png" width="450"/>
+<img src="images/learning_curve.png" width="500" height="300"/>
 
 ### Confusion Matrix
 
-<img src="images/confusion_matrix2.png" width="500"/>
+<img src="images/confusion_matrix2.png" width="600"/>
 
 
 # Test a Model on New Images
 
 Here are ten German traffic signs that I found on the web:
 
-<img src="images/new_images.png" width="750"/>
+<img src="images/new_images.png" width="750" height="130"/>
 
 Since these images are not in the right shape accepted by the classifier they were downsampled and smoothed before applying the `preprocess_dataset` function.
 
@@ -132,3 +132,11 @@ Below I visualize the softmax probablities for each test image :
 
 <img src="images/new_image_top5.png" width="750"/>
 
+
+# Conclusion
+
+This pipeline was very effective during the experimentations. In the end, the traffic sign classifier works pretty well overall with the test set.  
+
+However, the network did not work as good with ramdom sample images from the internet.  
+
+Moreover, if a self-driving car needs to find traffic signs in public, it first needs to know where the traffic signs are. For speeding signs, we may need an OCR (object recognition) mechanism that scan across the image with sliding windows to find the candidate signs.  This kind of detection mechanism is not covered in this project.
